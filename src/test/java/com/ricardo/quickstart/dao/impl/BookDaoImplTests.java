@@ -46,4 +46,32 @@ public class BookDaoImplTests {
                 eq("978-1-2345-6789-0")
         );
     }
+
+    @Test
+    public void testThatFindManyGeneratesTheCorrectSql(){
+        underTest.findManyBook();
+        verify(jdbcTemplate).query(
+                eq("SELECT isbn, title, author_id FROM books"),
+                ArgumentMatchers.<BookDaoImpl.BookRowMapper>any()
+        );
+    }
+
+    @Test
+    public void testThatUpdateGeneratesTheCorrectSql(){
+        Book book = TestDataUtil.createTestBookA();
+        underTest.update("978-8-4395-9621-9",book);
+        verify(jdbcTemplate).update(
+                "UPDATE books SET isbn=?, title=?, author_id=? WHERE isbn=?",
+                "978-8-4395-9621-9", "Robert Foster", 1L, "978-8-4395-9621-9"
+        );
+    }
+
+    @Test
+    public void testThatDeleteGeneratesTheCorrectSql(){
+        underTest.delete("978-8-4395-9621-9");
+        verify(jdbcTemplate).update(
+                "DELETE FROM books WHERE isbn=?",
+                "978-8-4395-9621-9"
+        );
+    }
 }

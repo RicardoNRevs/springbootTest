@@ -46,5 +46,29 @@ public class AuthorDapImplTests {
         );
     }
 
-//    @Test
+    @Test
+    public void testThatFindManyGeneratesTheCorrectSql(){
+        underTest.findManyAuthor();
+        verify(jdbcTemplate).query(
+                eq("SELECT id, name, age FROM authors"),
+                ArgumentMatchers.<AuthorDaoImpl.AuthorRowMapper>any()
+        );
+    }
+
+    @Test
+    public void testThatUpdateGeneratesTheCorrectSql(){
+        Author author = TestDataUtil.createTestAuthor();
+        underTest.update(author.getId(), author);
+        verify(jdbcTemplate).update(
+                "UPDATE authors SET id=?, name=?, age=? WHERE id=?", 1L, "Ricardo Nain", 32,1L
+        );
+    }
+
+    @Test
+    public void testThatDeleteGenerateTheCorrectSql(){
+        underTest.delete(1L);
+        verify(jdbcTemplate).update(
+                "DELETE FROM authors WHERE id=?", 1L
+        );
+    }
 }
